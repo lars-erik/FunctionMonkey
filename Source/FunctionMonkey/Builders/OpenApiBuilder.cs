@@ -21,6 +21,18 @@ namespace FunctionMonkey.Builders
             return this;
         }
 
+        public IOpenApiBuilder OpenApiSpecVersion(string openApiSpecVersion)
+        {
+            _openApiConfiguration.OpenApiSpecVersion = openApiSpecVersion;
+            return this;
+        }
+
+        public IOpenApiBuilder Format(string format)
+        {
+            _openApiConfiguration.Format = format;
+            return this;
+        }
+
         public IOpenApiBuilder Title(string title)
         {
             _openApiConfiguration.Title = title;

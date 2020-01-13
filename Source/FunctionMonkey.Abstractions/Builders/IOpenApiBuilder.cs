@@ -75,5 +75,9 @@ namespace FunctionMonkey.Abstractions.Builders
         /// A lambda that returns a unique identifier for the provided system type
         /// </param>
         IOpenApiBuilder CustomSchemaIds(Func<Type, string> schemaIdSelector);
+
+        IOpenApiBuilder OpenApiSpecVersion(string openApiSpecVersion);
+
+        IOpenApiBuilder Format(string format);
     }
 }

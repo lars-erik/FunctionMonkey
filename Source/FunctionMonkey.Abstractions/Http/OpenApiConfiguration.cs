@@ -8,6 +8,7 @@ namespace FunctionMonkey.Abstractions.Http
     public class OpenApiConfiguration
     {
         public string Version { get; set; }
+        public string OpenApiSpecVersion { get; set; } = "OpenApi3_0";
 
         public string Title { get; set; }
 
@@ -41,5 +42,7 @@ namespace FunctionMonkey.Abstractions.Http
         public IList<Func<IOpenApiSchemaFilter>> SchemaFilterFactories { get; } = new List<Func<IOpenApiSchemaFilter>>();
 
         public Func<Type, string> SchemaIdSelector { get; set; }
+
+        public string Format { get; set; } = "yaml";
     }
 }

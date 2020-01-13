@@ -85,31 +85,33 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
                 return null;
             }
 
-            string yaml = openApiDocument.Serialize(OpenApiSpecVersion.OpenApi3_0, OpenApiFormat.Yaml);
+            var specVersion = Enum.Parse<OpenApiSpecVersion>(configuration.OpenApiSpecVersion);
+            var format = Enum.Parse<OpenApiFormat>(configuration.Format, true);
+            string output = openApiDocument.Serialize(specVersion, format);
             OpenApiOutputModel result = new OpenApiOutputModel
             {
                 OpenApiSpecification = new OpenApiFileReference
                 {
-                    Content = yaml,
-                    Filename = "openapi.yaml"
+                    Content = output,
+                    Filename = $"openapi.{configuration.Format}"
                 }
             };
 
             if (!string.IsNullOrWhiteSpace(configuration.UserInterfaceRoute))
             {
-                result.SwaggerUserInterface = CopySwaggerUserInterfaceFilesToWebFolder();
+                result.SwaggerUserInterface = CopySwaggerUserInterfaceFilesToWebFolder(configuration.Format);
             }
 
             if (!string.IsNullOrWhiteSpace(configuration.OutputPath))
             {
                 if (Directory.Exists(configuration.OutputPath))
                 {
-                    string pathAndFilename = Path.Combine(configuration.OutputPath, "openapi.yaml");
+                    string pathAndFilename = Path.Combine(configuration.OutputPath, $"openapi.{configuration.Format}");
                     if (File.Exists(pathAndFilename))
                     {
                         File.Delete(pathAndFilename);
                     }
-                    File.WriteAllText(pathAndFilename, yaml, Encoding.UTF8);
+                    File.WriteAllText(pathAndFilename, output, Encoding.UTF8);
                 }
             }
 
@@ -142,7 +144,7 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
             return apiPrefix;
         }
 
-        private OpenApiFileReference[] CopySwaggerUserInterfaceFilesToWebFolder()
+        private OpenApiFileReference[] CopySwaggerUserInterfaceFilesToWebFolder(string format)
         {
             const string prefix = "FunctionMonkey.Compiler.Core.node_modules.swagger_ui_dist.";
             Assembly sourceAssembly = GetType().Assembly;
@@ -169,8 +171,8 @@ namespace FunctionMonkey.Compiler.Core.Implementation.OpenApi
 
                 if (swaggerFile.EndsWith(".index.html"))
                 {
-                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", "./openapi/openapi.yaml");
-                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", "./openapi/openapi.yaml");
+                    content = content.Replace("http://petstore.swagger.io/v2/swagger.json", $"./openapi/openapi.{format}");
+                    content = content.Replace("https://petstore.swagger.io/v2/swagger.json", $"./openapi/openapi.{format}");
                     content = content.Replace("=\"./swagger", $"=\"./openapi/swagger");
                 }
 
